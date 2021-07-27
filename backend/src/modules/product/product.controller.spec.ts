@@ -29,3 +29,13 @@ describe('List Product Controller', () => {
         expect(response.status).toBe(200);
     })
 });
+
+describe('Create Product Controller', () => {
+    it('Should be able to create a product', async () => {
+        const response = await request(app)
+            .post('/products')
+            .send({ name: 'Product 1' });
+
+        expect(response.status).toBe(201);
+    })
+});

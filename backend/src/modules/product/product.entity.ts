@@ -21,4 +21,4 @@ class ProductEntity {
     updated_at: Date;
 }
   
-export default ProductEntity;
+export { ProductEntity };

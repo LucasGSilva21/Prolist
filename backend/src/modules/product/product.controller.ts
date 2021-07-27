@@ -2,10 +2,18 @@ import { Request, Response } from 'express';
 import ProductService from './product.service';
 
 class ProductController {
-    async index(req: Request, res: Response) {
+    async index(request: Request, response: Response) {
         const products = await ProductService.index();
 
-        return res.json(products);
+        return response.status(200).json(products);
+    }
+
+    async create(request: Request, response: Response) {
+        const { name } = request.body;
+
+        const product = await ProductService.create({ name });
+
+        return response.status(201).json(product);
     }
 }
 

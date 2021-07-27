@@ -1,12 +1,27 @@
-class ProductService {
-    private products = [
-        "product1",
-        "product2",
-        "product3"
-    ];
+import { getCustomRepository } from 'typeorm';
+import { ProductRepository } from './product.repository';
 
+interface ICreateProductRequest {
+    name: string;
+}
+
+class ProductService {
     async index() {
-        return await this.products;
+        const productRepository = getCustomRepository(ProductRepository);
+
+        const products = await productRepository.find();
+
+        return products;
+    }
+
+    async create({ name }: ICreateProductRequest) {
+        const productRepository = getCustomRepository(ProductRepository);
+
+        const productCreate = productRepository.create({ name });
+
+        await productRepository.save(productCreate);
+
+        return productCreate;
     }
 }
 
