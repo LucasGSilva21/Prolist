@@ -6,7 +6,7 @@ import createConnection from '../../database';
 let connection: Connection;
 
 beforeAll(async () => {
-    connection = await createConnection('test-connection');
+    connection = await createConnection('product-test-connection');
     await connection.runMigrations();
 });
 
