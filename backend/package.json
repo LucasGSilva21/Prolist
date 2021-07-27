@@ -4,8 +4,13 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "jest",
-    "start:dev": "ts-node-dev --transpile-only --ignore-watch node_modules src/server.ts"
+    "test": "cross-env NODE_ENV=test jest",
+    "build": "tsc",
+    "start": "ts-node src/server.ts",
+    "start:dev": "ts-node-dev --transpile-only --ignore-watch node_modules src/server.ts",
+    "typeorm": "ts-node-dev ./node_modules/typeorm/cli.js",
+    "migrate": "npm run typeorm migration:run",
+    "migration:create": "typeorm migration:create -n"
   },
   "keywords": [],
   "author": "Lucas Gabriel Silva",
@@ -26,9 +31,11 @@
     "@types/jest": "^26.0.24",
     "@types/jsonwebtoken": "^8.5.4",
     "@types/supertest": "^2.0.11",
+    "cross-env": "^7.0.3",
     "jest": "^27.0.6",
     "supertest": "^6.1.4",
     "ts-jest": "^27.0.4",
+    "ts-node": "^10.1.0",
     "ts-node-dev": "^1.1.8",
     "typescript": "^4.3.5"
   }
