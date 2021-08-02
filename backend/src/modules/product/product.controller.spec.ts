@@ -2,7 +2,8 @@ import { app } from '../../app';
 import request from 'supertest';
 import { Connection, getConnection } from 'typeorm';
 import createConnection from '../../database';
-import { createUserAndGetToken } from '../../common/utils/tests/auth.util';
+import UserService from '../user/user.service';
+import AuthService from '../auth/auth.service';
 
 let connection: Connection;
 
@@ -34,12 +35,17 @@ describe('List Product Controller', () => {
 
 describe('Create Product Controller', () => {
     it('Should be able to create a product', async () => {
-        const token = await createUserAndGetToken(app, {
+        await UserService.create({
             name: 'User Test Login',
             email: 'usertestlogin@mail.com',
             password: '123456'
         });
 
+        const { token } = await AuthService.login({
+            email: 'usertestlogin@mail.com',
+            password: '123456'
+        });
+        
         const response = await request(app)
             .post('/products')
             .set('Accept', 'application/json')
