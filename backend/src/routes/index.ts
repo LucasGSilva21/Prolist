@@ -5,6 +5,10 @@ import authRoutes from './auth.routes';
 
 const routes = Router();
 
+routes.get('/', (req, res) => {
+    res.send("Welcome!!!");
+})
+
 routes.use('/products', productRoutes);
 routes.use('/users', userRoutes);
 routes.use('/auth', authRoutes);

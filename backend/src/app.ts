@@ -1,5 +1,6 @@
 import 'dotenv/config';
-import express from 'express';
+import 'express-async-errors';
+import express, { NextFunction, Request, Response } from 'express';
 import cors from 'cors';
 import { routes } from './routes';
 import createConnection from './database';
@@ -11,10 +12,15 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-app.get('/', (req, res) => {
-    res.send("Hello world!!!");
-})
-
 app.use(routes);
+
+app.use(
+    (error: Error, req: Request, res: Response, next: NextFunction) => {
+        return res.json({
+            status: "Error",
+            message: error.message,
+        });
+    }
+);
 
 export { app };
