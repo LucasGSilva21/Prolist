@@ -20,7 +20,9 @@ export function ensureAuthenticated(
     const authToken = request.headers.authorization;
 
     if (!authToken) {
-        return response.status(401).end();
+        return response.status(401).json({
+            message: 'Token is missing'
+        });
     }
 
     const [, token] = authToken.split(' ');
@@ -35,6 +37,8 @@ export function ensureAuthenticated(
 
         return next();
     } catch (err) {
-        return response.status(401).end();
+        return response.status(401).json({
+            message: 'Token invalid'
+        });
     }
 }
