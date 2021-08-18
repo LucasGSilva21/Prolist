@@ -1,4 +1,3 @@
-import { getCustomRepository } from 'typeorm';
 import { ProductRepository } from './product.repository';
 
 interface ICreateProductRequest {
@@ -6,23 +5,21 @@ interface ICreateProductRequest {
 }
 
 class ProductService {
-    async index() {
-        const productRepository = getCustomRepository(ProductRepository);
+    constructor(private productRepository: ProductRepository) {}
 
-        const products = await productRepository.find();
+    async findAll() {
+        const products = await this.productRepository.find();
 
         return products;
     }
 
     async create({ name }: ICreateProductRequest) {
-        const productRepository = getCustomRepository(ProductRepository);
+        const productCreate = this.productRepository.create({ name });
 
-        const productCreate = productRepository.create({ name });
-
-        await productRepository.save(productCreate);
+        await this.productRepository.save(productCreate);
 
         return productCreate;
     }
 }
 
-export default new ProductService();
+export { ProductService };

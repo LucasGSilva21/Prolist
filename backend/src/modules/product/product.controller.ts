@@ -1,9 +1,11 @@
 import { Request, Response } from 'express';
-import ProductService from './product.service';
+import { ProductService } from './product.service';
 
 class ProductController {
-    async index(request: Request, response: Response) {
-        const products = await ProductService.index();
+    constructor(private productService: ProductService) {}
+
+    async findAll(request: Request, response: Response) {
+        const products = await this.productService.findAll();
 
         return response.status(200).json(products);
     }
@@ -11,10 +13,10 @@ class ProductController {
     async create(request: Request, response: Response) {
         const { name } = request.body;
 
-        const product = await ProductService.create({ name });
+        const product = await this.productService.create({ name });
 
         return response.status(201).json(product);
     }
 }
 
-export default new ProductController();
+export { ProductController };
