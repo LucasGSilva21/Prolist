@@ -1,4 +1,3 @@
-import { getCustomRepository } from 'typeorm';
 import { UserRepository } from './user.repository';
 import { hash } from 'bcryptjs';
 import { classToPlain } from 'class-transformer';
@@ -10,10 +9,10 @@ interface ICreateUserRequest {
 }
 
 class UserService {
-    async findByEmail(email: string) {
-        const userRepository = getCustomRepository(UserRepository);
+    constructor(private userRepository: UserRepository) {}
 
-        const user = await userRepository.findOne({
+    async findByEmail(email: string) {
+        const user = await this.userRepository.findOne({
             email
         });
 
@@ -21,13 +20,11 @@ class UserService {
     }
 
     async create({ name, email, password }: ICreateUserRequest) {
-        const userRepository = getCustomRepository(UserRepository);
-
         if (!email) {
             throw new Error("Email incorrect");
         }
 
-        const userAlreadyExists = await userRepository.findOne({
+        const userAlreadyExists = await this.userRepository.findOne({
             email,
         });
 
@@ -37,16 +34,16 @@ class UserService {
 
         const passwordHash = await hash(password, 8);
 
-        const user = userRepository.create({ 
+        const user = this.userRepository.create({ 
             name, 
             email,
             password: passwordHash 
         });
 
-        await userRepository.save(user);
+        await this.userRepository.save(user);
 
         return user;
     }
 }
 
-export default new UserService();
+export { UserService };
