@@ -1,8 +1,10 @@
-import { Router } from 'express';
-import AuthController from '../modules/auth/auth.controller';
+import { Request, Response, Router } from 'express';
+import { authFactory } from '../modules/auth/auth.factory';
 
-const route = Router();
+const routes = Router();
 
-route.post('/login', AuthController.login);
+routes.post('/login', (request: Request, response: Response) => {
+    authFactory().login(request, response);
+});
 
-export default route;
+export default routes;

@@ -1,8 +1,10 @@
-import { Router } from 'express';
-import UserController from '../modules/user/user.controller';
+import { Request, Response, Router } from 'express';
+import { userFactory } from '../modules/user/user.factory';
 
-const route = Router();
+const routes = Router();
 
-route.post('/', UserController.create);
+routes.post('/', (request: Request, response: Response) => {
+    userFactory().create(request, response);
+});
 
-export default route;
+export default routes;
