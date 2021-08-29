@@ -32,5 +32,5 @@ describe('Create User Controller', () => {
             });
 
         expect(response.status).toBe(201);
-    })
+    });
 });

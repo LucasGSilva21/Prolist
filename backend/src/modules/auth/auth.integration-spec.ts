@@ -25,7 +25,7 @@ describe('Create Product Controller', () => {
                 name: 'Login Valid',
                 email: 'logintest@mail.com',
                 password: '123456'
-            })
+            });
 
         const response = await request(app)
             .post('/auth/login')

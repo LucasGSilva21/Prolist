@@ -3,12 +3,18 @@ import { ProductRepository } from './product.repository';
 import { ProductService } from './product.service';
 import { ProductController } from './product.controller';
 
-export const productFactory = () => {
-    const productRepository = getCustomRepository(ProductRepository);
+const makeProductRepository = () => {
+    return getCustomRepository(ProductRepository);
+}
 
-    const productService = new ProductService(productRepository);
+export const makeProductService = () => {
+    const productRepository = makeProductRepository();
 
-    const productController = new ProductController(productService);
+    return new ProductService(productRepository);
+}
 
-    return productController;
+export const makeProductController = () => {
+    const productService = makeProductService();
+
+    return new ProductController(productService);
 }

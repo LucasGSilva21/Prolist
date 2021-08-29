@@ -1,17 +1,15 @@
-import { getCustomRepository } from 'typeorm';
-import { UserRepository } from '../user/user.repository';
-import { UserService } from '../user/user.service';
 import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
+import { makeUserService } from '../user/user.factory';
 
-export const authFactory = () => {
-    const userRepository = getCustomRepository(UserRepository);
+export const makeAuthService = () => {
+    const userService = makeUserService();
 
-    const userService = new UserService(userRepository);
+    return new AuthService(userService);
+}
 
-    const authService = new AuthService(userService);
+export const makeAuthController = () => {
+    const authService = makeAuthService();
 
-    const authController = new AuthController(authService);
-
-    return authController;
+    return new AuthController(authService);
 }

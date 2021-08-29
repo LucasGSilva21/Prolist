@@ -2,22 +2,45 @@ import { app } from '../../app';
 import request from 'supertest';
 import { Connection, getConnection } from 'typeorm';
 import createConnection from '../../database';
-import UserService from '../user/user.service';
-import AuthService from '../auth/auth.service';
+import { makeUserService } from '../user/user.factory';
+import { UserService } from '../user/user.service';
+import { makeAuthService } from '../auth/auth.factory';
+import { AuthService } from '../auth/auth.service';
 
 let connection: Connection;
+
+let userService: UserService;
+let authService: AuthService;
+
+let token: string;
 
 beforeAll(async () => {
     connection = await createConnection('product-test-connection');
     await connection.runMigrations();
+
+    userService = makeUserService();
+    authService = makeAuthService();
+
+    await userService.create({
+        name: 'User Test Login',
+        email: 'usertestlogin@mail.com',
+        password: '123456'
+    });
+
+    const loginResult = await authService.login({
+        email: 'usertestlogin@mail.com',
+        password: '123456'
+    });
+    token = loginResult.token;
 });
 
 beforeEach(async () => {
     await connection.query('DELETE FROM products');
-    await connection.query('DELETE FROM users');
 });
 
 afterAll(async () => {
+    await connection.query('DELETE FROM users');
+    
     const mainConnection = getConnection();
 
     await connection.close();
@@ -35,17 +58,6 @@ describe('List Product Controller', () => {
 
 describe('Create Product Controller', () => {
     it('Should be able to create a product', async () => {
-        await UserService.create({
-            name: 'User Test Login',
-            email: 'usertestlogin@mail.com',
-            password: '123456'
-        });
-
-        const { token } = await AuthService.login({
-            email: 'usertestlogin@mail.com',
-            password: '123456'
-        });
-        
         const response = await request(app)
             .post('/products')
             .set('Accept', 'application/json')

@@ -3,12 +3,18 @@ import { UserRepository } from './user.repository';
 import { UserService } from './user.service';
 import { UserController } from './user.controller';
 
-export const userFactory = () => {
-    const userRepository = getCustomRepository(UserRepository);
+const makeUserRepository = () => {
+    return getCustomRepository(UserRepository);
+}
 
-    const userService = new UserService(userRepository);
+export const makeUserService = () => {
+    const userRepository = makeUserRepository();
 
-    const userController = new UserController(userService);
+    return new UserService(userRepository);
+}
 
-    return userController;
+export const makeUserController = () => {
+    const userService = makeUserService();
+
+    return new UserController(userService);
 }
