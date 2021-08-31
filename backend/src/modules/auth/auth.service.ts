@@ -2,6 +2,8 @@ import 'dotenv/config';
 import { compare } from 'bcryptjs';
 import { sign } from 'jsonwebtoken';
 import { UserService } from '../user/user.service';
+import crypto from 'crypto';
+import mailer from '../../common/helpers/mailer';
 
 interface IAuthRequest {
     email: string;
@@ -15,13 +17,13 @@ class AuthService {
         const user = await this.userService.findByEmail(email);
 
         if (!user) {
-        throw new Error('Email/Password incorrect');
+            throw new Error('Email/Password incorrect');
         }
 
         const passwordMatch = await compare(password, user.password);
 
         if (!passwordMatch) {
-        throw new Error('Email/Password incorrect');
+            throw new Error('Email/Password incorrect');
         }
 
         const token = sign(
@@ -36,6 +38,37 @@ class AuthService {
         );
 
         return { token };
+    }
+
+    async forgotPassword(email: string) {
+        const user = await this.userService.findByEmail(email);
+
+        if (!user) {
+            throw new Error('User not found');
+        }
+
+        const token = crypto.randomBytes(20).toString('hex');
+
+        const now = new Date();
+
+        now.setHours(now.getHours() + 1);
+
+        await this.userService.saveResetPassword({ 
+            userId: user.id, 
+            passwordResetToken: token, 
+            passwordResetExpires: now 
+        });
+
+        mailer.sendMail({
+            to: email,
+            from: process.env.MAILER_CONFIG_EMAIL,
+            subject: 'Resetar senha', 
+            html: `<p>Esqueceu sua senha? Não tem problema. Utilize esse token: ${ token }</p>` //change to link
+        }, (err) => {
+            if (err) {
+                throw new Error('Cannot send forgot password email');
+            }
+        });
     }
 }
 

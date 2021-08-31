@@ -14,6 +14,18 @@ class UserEntity extends BaseEntity {
 
     @Column()
     password: string;
+
+    @Column({
+        name: 'password_reset_token',
+        nullable: true
+    })
+    passwordResetToken: string;
+
+    @Column({
+        name: 'password_reset_expires',
+        nullable: true
+    })
+    passwordResetExpires: Date;
 }
   
 export { UserEntity };

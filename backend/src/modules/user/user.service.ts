@@ -8,6 +8,12 @@ interface ICreateUserRequest {
     password: string;
 }
 
+interface ISaveResetPassword {
+    userId: string;
+    passwordResetToken: string;
+    passwordResetExpires: Date;
+}
+
 class UserService {
     constructor(private userRepository: UserRepository) {}
 
@@ -43,6 +49,21 @@ class UserService {
         await this.userRepository.save(user);
 
         return user;
+    }
+
+    async saveResetPassword({ userId, passwordResetToken, passwordResetExpires }: ISaveResetPassword) {
+        const user = await this.userRepository.findOne({
+            id: userId
+        });
+
+        if (!user) {
+            throw new Error('Email/Password incorrect');
+        }
+
+        user.passwordResetToken = passwordResetToken;
+        user.passwordResetExpires = passwordResetExpires;
+
+        await this.userRepository.save(user);
     }
 }
 

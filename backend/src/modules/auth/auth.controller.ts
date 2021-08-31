@@ -11,6 +11,14 @@ class AuthController {
 
         return response.status(200).json(result);
     }
+
+    async forgotPassword(request: Request, response: Response) {
+        const { email } = request.body;
+
+        await this.authService.forgotPassword(email);
+
+        return response.status(204).send();
+    }
 }
 
 export { AuthController };

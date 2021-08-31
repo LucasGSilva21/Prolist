@@ -6,5 +6,8 @@ const routes = Router();
 routes.post('/login', (request: Request, response: Response) => {
     makeAuthController().login(request, response);
 });
+routes.post('/forgot-password', (request: Request, response: Response) => {
+    makeAuthController().forgotPassword(request, response);
+});
 
 export default routes;
