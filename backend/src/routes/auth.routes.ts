@@ -9,5 +9,8 @@ routes.post('/login', (request: Request, response: Response) => {
 routes.post('/forgot-password', (request: Request, response: Response) => {
     makeAuthController().forgotPassword(request, response);
 });
+routes.post('/reset-password', (request: Request, response: Response) => {
+    makeAuthController().resetPassword(request, response);
+});
 
 export default routes;

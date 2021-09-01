@@ -10,6 +10,12 @@ interface IAuthRequest {
     password: string;
 }
 
+interface IResetPasswordRequest {
+    email: string;
+    token: string;
+    newPassword: string;
+}
+
 class AuthService {
     constructor(private userService: UserService) {}
 
@@ -68,6 +74,29 @@ class AuthService {
             if (err) {
                 throw new Error('Cannot send forgot password email');
             }
+        });
+    }
+
+    async resetPassword({ email, token, newPassword }: IResetPasswordRequest) {
+        const user = await this.userService.findByEmail(email);
+
+        if (!user) {
+            throw new Error('User not found');
+        }
+
+        if (token !== user.passwordResetToken) {
+            throw new Error('Token invalid');
+        }
+
+        const now = new Date();
+
+        if (now > user.passwordResetExpires) {
+            throw new Error('Token expired');
+        }
+
+        await this.userService.updatePassword({
+            userId: user.id,
+            newPassword
         });
     }
 }

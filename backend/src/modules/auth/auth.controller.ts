@@ -19,6 +19,14 @@ class AuthController {
 
         return response.status(204).send();
     }
+
+    async resetPassword(request: Request, response: Response) {
+        const { email, token, newPassword } = request.body;
+
+        await this.authService.resetPassword({ email, token, newPassword });
+
+        return response.status(204).send();
+    }
 }
 
 export { AuthController };

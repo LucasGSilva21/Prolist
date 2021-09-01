@@ -14,6 +14,11 @@ interface ISaveResetPassword {
     passwordResetExpires: Date;
 }
 
+interface IUpdatePassword {
+    userId: string;
+    newPassword: string;
+}
+
 class UserService {
     constructor(private userRepository: UserRepository) {}
 
@@ -57,11 +62,25 @@ class UserService {
         });
 
         if (!user) {
-            throw new Error('Email/Password incorrect');
+            throw new Error('User not found');
         }
 
         user.passwordResetToken = passwordResetToken;
         user.passwordResetExpires = passwordResetExpires;
+
+        await this.userRepository.save(user);
+    }
+
+    async updatePassword({ userId, newPassword }: IUpdatePassword) {
+        const user = await this.userRepository.findOne({
+            id: userId
+        });
+
+        if (!user) {
+            throw new Error('User not found');
+        }
+
+        user.password = await hash(newPassword, 8);
 
         await this.userRepository.save(user);
     }
