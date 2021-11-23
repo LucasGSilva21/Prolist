@@ -3,7 +3,7 @@ import { compare } from 'bcryptjs';
 import { sign } from 'jsonwebtoken';
 import { UserService } from '../user/user.service';
 import crypto from 'crypto';
-import mailer from '../../common/helpers/mailer';
+import { EmailSender } from '../../common/helpers/mailer';
 
 interface IAuthRequest {
     email: string;
@@ -17,7 +17,10 @@ interface IResetPasswordRequest {
 }
 
 class AuthService {
-    constructor(private userService: UserService) {}
+    constructor(
+        private userService: UserService,
+        private emailSender: EmailSender
+    ) {}
 
     async login({ email, password }: IAuthRequest) {
         const user = await this.userService.findByEmail(email);
@@ -65,16 +68,11 @@ class AuthService {
             passwordResetExpires: now 
         });
 
-        mailer.sendMail({
-            to: email,
-            from: process.env.MAILER_CONFIG_EMAIL,
-            subject: 'Resetar senha', 
-            html: `<p>Esqueceu sua senha? Não tem problema. Utilize esse token: ${ token }</p>` //change to link
-        }, (err) => {
-            if (err) {
-                throw new Error('Cannot send forgot password email');
-            }
-        });
+        this.emailSender.sendMessage(
+            email,
+            'Resetar senha',
+            `<p>Esqueceu sua senha? Não tem problema. Utilize esse token: ${ token }</p>`, //change to link
+        );
     }
 
     async resetPassword({ email, token, newPassword }: IResetPasswordRequest) {
