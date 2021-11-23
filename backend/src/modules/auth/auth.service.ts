@@ -4,6 +4,7 @@ import { sign } from 'jsonwebtoken';
 import { UserService } from '../user/user.service';
 import crypto from 'crypto';
 import { EmailSender } from '../../common/helpers/mailer';
+import { InvalidParamError } from '../../common/errors';
 
 interface IAuthRequest {
     email: string;
@@ -26,24 +27,19 @@ class AuthService {
         const user = await this.userService.findByEmail(email);
 
         if (!user) {
-            throw new Error('Email/Password incorrect');
+            throw new InvalidParamError('Email/Password', 'Email/Password incorrect');
         }
 
         const passwordMatch = await compare(password, user.password);
 
         if (!passwordMatch) {
-            throw new Error('Email/Password incorrect');
+            throw new InvalidParamError('Email/Password', 'Email/Password incorrect');
         }
 
         const token = sign(
-            {
-                email: user.email,
-            },
+            { email: user.email },
             process.env.JWT_SECRET,
-            {
-                subject: user.id,
-                expiresIn: '1d',
-            }
+            { subject: user.id, expiresIn: '1d' }
         );
 
         return { token };
@@ -52,9 +48,7 @@ class AuthService {
     async forgotPassword(email: string) {
         const user = await this.userService.findByEmail(email);
 
-        if (!user) {
-            throw new Error('User not found');
-        }
+        if (!user) return;
 
         const token = crypto.randomBytes(20).toString('hex');
 
@@ -79,17 +73,17 @@ class AuthService {
         const user = await this.userService.findByEmail(email);
 
         if (!user) {
-            throw new Error('User not found');
+            throw new InvalidParamError('User/Token', 'User/Token invalid');
         }
 
         if (token !== user.passwordResetToken) {
-            throw new Error('Token invalid');
+            throw new InvalidParamError('User/Token', 'User/Token invalid');
         }
 
         const now = new Date();
 
         if (now > user.passwordResetExpires) {
-            throw new Error('Token expired');
+            throw new InvalidParamError('User/Token', 'User/Token invalid');
         }
 
         await this.userService.updatePassword({

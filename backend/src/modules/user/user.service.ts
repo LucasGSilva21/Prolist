@@ -1,6 +1,7 @@
 import { UserRepository } from './user.repository';
 import { hash } from 'bcryptjs';
 import { classToPlain } from 'class-transformer';
+import { InvalidParamError, NotFoundError, MissingParamError } from '../../common/errors';
 
 interface ICreateUserRequest {
     name: string;
@@ -32,7 +33,7 @@ class UserService {
 
     async create({ name, email, password }: ICreateUserRequest) {
         if (!email) {
-            throw new Error("Email incorrect");
+            throw new MissingParamError('Email');
         }
 
         const userAlreadyExists = await this.userRepository.findOne({
@@ -40,7 +41,7 @@ class UserService {
         });
 
         if (userAlreadyExists) {
-            throw new Error("User already exists");
+            throw new InvalidParamError('Email', 'User already exists');
         }
 
         const passwordHash = await hash(password, 8);
@@ -62,7 +63,7 @@ class UserService {
         });
 
         if (!user) {
-            throw new Error('User not found');
+            throw new NotFoundError(userId);
         }
 
         user.passwordResetToken = passwordResetToken;
@@ -77,7 +78,7 @@ class UserService {
         });
 
         if (!user) {
-            throw new Error('User not found');
+            throw new NotFoundError(userId);
         }
 
         user.password = await hash(newPassword, 8);

@@ -1,9 +1,10 @@
 import 'dotenv/config';
 import 'express-async-errors';
-import express, { NextFunction, Request, Response } from 'express';
+import express from 'express';
 import cors from 'cors';
 import { routes } from './routes';
 import createConnection from './database';
+import { validateResponseError } from './common/helpers/validate-response-error';
 
 createConnection();
 
@@ -14,13 +15,6 @@ app.use(cors());
 
 app.use(routes);
 
-app.use(
-    (error: Error, req: Request, res: Response, next: NextFunction) => {
-        return res.status(400).json({
-            status: "Error",
-            message: error.message,
-        });
-    }
-);
+app.use(validateResponseError);
 
 export { app };
