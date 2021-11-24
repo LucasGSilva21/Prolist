@@ -3,12 +3,17 @@ import { Request, Response, NextFunction } from 'express';
 import { verify } from 'jsonwebtoken';
 
 interface IPayload {
-    sub: string;
+    email: string,
+    role: string,
+    iat: number,
+    exp: number,
+    sub: string
 }
 
 interface IUserInfoRequest extends Request {
     user: {
         id: string;
+        role: string;
     }
 }
 
@@ -28,12 +33,15 @@ export function ensureAuthenticated(
     const [, token] = authToken.split(' ');
 
     try {
-        const { sub } = verify(
+        const { sub, role } = verify(
             token,
             process.env.JWT_SECRET
         ) as IPayload;
 
-        request.user = { id: sub };
+        request.user = { 
+            id: sub,
+            role: role
+        };
 
         return next();
     } catch (err) {

@@ -16,6 +16,11 @@ class UserEntity extends BaseEntity {
     password: string;
 
     @Column({
+        default: "'user'"
+    })
+    role: string;
+
+    @Column({
         name: 'password_reset_token',
         nullable: true
     })
