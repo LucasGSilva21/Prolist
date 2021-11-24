@@ -4,6 +4,18 @@ import { ProductService } from './product.service';
 class ProductController {
     constructor(private productService: ProductService) {}
 
+    async findOne(request: Request, response: Response, next: NextFunction) {
+        try {
+            const { id } = request.params;
+
+            const product = await this.productService.findOne(id);
+
+            return response.status(200).json(product);
+        } catch (err) {
+            return next(err);
+        }
+    }
+
     async findAll(request: Request, response: Response, next: NextFunction) {
         try {
             const products = await this.productService.findAll();

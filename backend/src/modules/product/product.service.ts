@@ -7,6 +7,14 @@ interface ICreateProductRequest {
 class ProductService {
     constructor(private productRepository: ProductRepository) {}
 
+    async findOne(productId: string) {
+        const product = await this.productRepository.findOne({
+            id: productId
+        });
+
+        return product;
+    }
+
     async findAll() {
         const products = await this.productRepository.find();
 
