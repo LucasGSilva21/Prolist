@@ -1,6 +1,6 @@
 import { app } from '../../src/app';
 import request from 'supertest';
-import { Connection, getConnection } from 'typeorm';
+import { Connection } from 'typeorm';
 import createConnection from '../../src/database';
 import { makeUserService } from '../../src/modules/user/user.factory';
 import { UserService } from '../../src/modules/user/user.service';
@@ -40,11 +40,7 @@ beforeEach(async () => {
 
 afterAll(async () => {
     await connection.query('DELETE FROM users');
-    
-    const mainConnection = getConnection();
-
     await connection.close();
-    await mainConnection.close();
 });
 
 describe('List Product Controller', () => {
