@@ -1,7 +1,7 @@
-import { app } from '../../app';
+import { app } from '../../src/app';
 import request from 'supertest';
 import { Connection, getConnection } from 'typeorm';
-import createConnection from '../../database';
+import createConnection from '../../src/database';
 
 let connection: Connection;
 

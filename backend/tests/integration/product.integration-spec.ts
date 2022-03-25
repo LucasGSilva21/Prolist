@@ -1,11 +1,11 @@
-import { app } from '../../app';
+import { app } from '../../src/app';
 import request from 'supertest';
 import { Connection, getConnection } from 'typeorm';
-import createConnection from '../../database';
-import { makeUserService } from '../user/user.factory';
-import { UserService } from '../user/user.service';
-import { makeAuthService } from '../auth/auth.factory';
-import { AuthService } from '../auth/auth.service';
+import createConnection from '../../src/database';
+import { makeUserService } from '../../src/modules/user/user.factory';
+import { UserService } from '../../src/modules/user/user.service';
+import { makeAuthService } from '../../src/modules/auth/auth.factory';
+import { AuthService } from '../../src/modules/auth/auth.service';
 
 let connection: Connection;
 
